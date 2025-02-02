@@ -1,0 +1,28 @@
+name: infra deploy
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout git repo
+        uses: actions/checkout@v2
+
+      - uses: hashicorp/setup-terraform@v2
+        name: setup terraform
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - if: github.ref == 'refs/heads/main'
+        name: Terraform Apply
+        run: terraform apply -auto-approve
